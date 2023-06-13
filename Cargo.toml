@@ -1,0 +1,51 @@
+[package]
+name = "ant"
+description = "Another Network Tunnel, program for port forwarding addresses over a SSH tunnel."
+version = "0.1.0"
+edition = "2021"
+authors = ["Hendrik Böck <hendrikboeck.dev@protonmail.com>"]
+license-file = "LICENSE"
+repository = "https://github.com/hendrikboeck/ant-rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+chrono = "0.4"
+colored = "2"
+env_logger = "0.10"
+log = "0.4"
+openssh = { version = "0.9", features = ["process-mux"] }
+clap = { version = "4", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.9"
+exitcode = "1.1.2"
+directories = "5.0.1"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+ctrlc = "3.4.0"
+
+[package.metadata.deb]
+assets = [
+  [
+    "target/release/ant",
+    "usr/bin/ant",
+    "755",
+  ],
+  [
+    "README.md",
+    "usr/share/doc/ant/README",
+    "644",
+  ],
+]
+maintainer = "Hendrik Böck <hendrikboeck.dev@protonmail.com>"
+copyright = "2023, Hendrik Böck <hendrikboeck.dev@protonmail.com>"
+depends = "$auto"
+section = "utility"
+priority = "optional"
+
+[package.metadata.generate-rpm]
+license = "GPL-3.0-or-later"
+assets = [
+  { source = "target/release/ant", dest = "/usr/bin/ant", mode = "755" },
+  { source = "README.md", dest = "/usr/share/doc/ant/README", mode = "644" },
+]
+auto-req = "auto"

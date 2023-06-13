@@ -1,0 +1,12 @@
+version: "0.1.0"
+
+hosts:
+
+  tunnel0:
+    hostname: 10.0.0.100
+    port: 22
+    identity_file: id_rsa
+    user: user
+    local_forward:
+      - local: 8080
+        remote: 127.0.0.1:80
