@@ -1,24 +1,23 @@
-mod conf;
+mod command_builder;
+mod configuration;
 mod logger;
 mod yaml;
 
 use clap::Parser;
 use colored::*;
 use exitcode;
-use log::{debug, error, info};
-use openssh::{ForwardType, KnownHosts, SessionBuilder};
+use log::{debug, error, info, warn};
 use std::{
     env, fs,
-    net::{AddrParseError, IpAddr, Ipv4Addr, SocketAddr},
     process::exit,
     sync::{
         atomic::{AtomicBool, Ordering},
         Arc,
     },
-    time::Duration,
 };
 
-use crate::conf::{ssh_dir, CliArgs};
+use crate::command_builder::{build_ssh_process, LOG_FILE};
+use crate::configuration::{CliArgs, TMP_DIR};
 use crate::logger::build_custom_env_logger;
 use crate::yaml::Root;
 
@@ -26,6 +25,8 @@ use crate::yaml::Root;
 async fn main() {
     const PKG_NAME: &str = env!("CARGO_PKG_NAME");
     const PKG_VERSION: &str = env!("CARGO_PKG_VERSION");
+    const PKG_VERSION_MAJOR: &str = env!("CARGO_PKG_VERSION_MAJOR");
+    const PKG_VERSION_MINOR: &str = env!("CARGO_PKG_VERSION_MINOR");
 
     let pname = format!(
         "🐜 {} {} - Command Line Tool",
@@ -41,20 +42,28 @@ async fn main() {
         env::set_var("RUST_BACKTRACE", "1");
     }
 
-    let logger = build_custom_env_logger();
-    let max_level = logger.filter();
-    log::set_boxed_logger(Box::new(logger)).unwrap();
-    log::set_max_level(max_level);
+    build_custom_env_logger().init();
 
     info!("Parsed arguments from CLI");
     debug!("{:#?}", &args);
+
+    if !TMP_DIR.exists() {
+        fs::create_dir_all(TMP_DIR.as_path()).unwrap_or_else(|e| {
+            error!(
+                "Failed to create local directory `{}`. Does not yet exist in filepath.",
+                TMP_DIR.to_string_lossy()
+            );
+            error!("Original Error: {}", e.to_string().italic());
+            exit(exitcode::SOFTWARE);
+        });
+    }
 
     let file = fs::read_to_string(&args.config).unwrap_or_else(|e| {
         error!("Failed load file `{}`", &args.config);
         error!("Original Error: {}", e.to_string().italic());
         exit(exitcode::IOERR);
     });
-    info!("Loaded SSH host configuration from `{}`", &args.config);
+    info!("Loaded ant configuration from `{}`", &args.config);
 
     let root: Root = serde_yaml::from_str(&file).unwrap_or_else(|e| {
         error!(
@@ -66,7 +75,8 @@ async fn main() {
     });
     debug!("{:#?}", &root);
 
-    if root.version != PKG_VERSION {
+    let root_pkg_version: Vec<&str> = root.version.split('.').collect();
+    if root_pkg_version[0] != PKG_VERSION_MAJOR || root_pkg_version[1] != PKG_VERSION_MINOR {
         error!(
             "Application version did not match version found in `{}`: expected {:?}, found {:?}",
             &args.config, &PKG_VERSION, &root.version
@@ -84,40 +94,19 @@ async fn main() {
     info!("Loaded configuration for host `{}`", &args.host);
     debug!("{:#?}", &host);
 
-    let se = SessionBuilder::default()
-        .connect_timeout(Duration::from_secs(10))
-        .user(host.user.clone())
-        .keyfile(ssh_dir().join(&host.identity_file))
-        .port(host.port)
-        .compression(true)
-        .known_hosts_check(KnownHosts::Strict)
-        .connect(&host.hostname)
-        .await
-        .unwrap_or_else(|e| {
-            error!("Failed to connect to host `{}`", &args.host);
-            error!("Original Error: {}", e.to_string().italic());
-            exit(exitcode::NOHOST);
-        });
-
-    for fwd in host.local_forward.iter() {
-        let local = SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), fwd.local);
-        let remote: SocketAddr = fwd.remote.parse().unwrap_or_else(|e: AddrParseError| {
-            error!("Malformed ip address and port");
-            error!("Original Error: {}", e.to_string().italic());
-            exit(exitcode::CONFIG);
-        });
-        se.request_port_forward(ForwardType::Local, local, remote)
-            .await
-            .unwrap_or_else(|e| {
-                error!(
-                    "Port forward request failed for {} -> localhost:{}",
-                    &fwd.remote, fwd.local
-                );
-                error!("Original Error: {}", e.to_string().italic());
-                exit(exitcode::UNAVAILABLE);
-            });
-        info!("Forwarding {} to localhost:{}", &fwd.remote, fwd.local);
+    if host.local_forward.is_none() && host.remote_forward.is_none() {
+        error!("At least one forwarding option has be set (`local_forward` or `remote_forward`)");
+        exit(exitcode::CONFIG);
     }
+
+    let mut proc = build_ssh_process(&args.host, &host)
+        .spawn()
+        .unwrap_or_else(|e| {
+            error!("Failed to spawn SSH process");
+            error!("Original Error: {}", e.to_string().italic());
+            exit(exitcode::OSERR);
+        });
+    info!("Spawned SSH process with PID {}", proc.id().unwrap());
 
     let running = Arc::new(AtomicBool::new(true));
     let r = running.clone();
@@ -128,9 +117,25 @@ async fn main() {
         exit(exitcode::OSERR);
     });
 
-    info!("Press Ctrl-C to close tunnel");
-    while running.load(Ordering::SeqCst) {}
+    info!("Waiting on Ctrl-C...");
+    while running.load(Ordering::SeqCst) {
+        if let Some(status) = proc.try_wait().unwrap_or_else(|e| {
+            warn!(
+                "unwrap() on process status failed; error: {}",
+                e.to_string().italic()
+            );
+            None
+        }) {
+            error!(
+                "Process exited prematurely with code {}, please check logs at `{}` for futher diagnosis.",
+                status.code().unwrap(),
+                LOG_FILE.get().unwrap()
+            );
+            exit(exitcode::SOFTWARE);
+        }
+    }
     println!();
-    info!("Closing connection to host `{}`", &args.host);
-    se.close().await.unwrap();
+    info!("Killing SSH process with PID {}", proc.id().unwrap());
+    proc.kill().await.unwrap();
+    info!("Finished. Exiting...");
 }
