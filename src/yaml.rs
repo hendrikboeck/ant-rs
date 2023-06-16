@@ -10,7 +10,7 @@ pub struct Root {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct Host {
     pub hostname: String,
-    pub port: u16,
+    pub port: Option<u16>,
     pub identity_file: String,
     pub user: String,
     pub local_forward: Option<Vec<Forward>>,
@@ -42,7 +42,7 @@ impl Default for SshOptions {
         Self {
             strict_host_key_checking: Some("yes".into()),
             bind_address: None,
-            batch_mode: Some(false),
+            batch_mode: Some(true),
             compression: Some(false),
             ciphers: None,
             connect_timeout: Some(10),

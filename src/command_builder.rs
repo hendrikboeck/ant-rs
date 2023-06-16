@@ -144,7 +144,7 @@ pub fn build_ssh_process(name: &str, host: &Host) -> Command {
 
     // server connection part
     cmd.arg("-p")
-        .arg(&host.port.to_string())
+        .arg(&host.port.unwrap_or(22).to_string())
         .arg("-l")
         .arg(&host.user)
         .arg(&host.hostname);
