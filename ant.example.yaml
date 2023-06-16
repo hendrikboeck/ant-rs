@@ -4,7 +4,7 @@ hosts:
 
   tunnel0:
     hostname: 10.0.0.100
-    port: 22
+    # port: 22
     identity_file: ~/.ssh/id_rsa
     user: user
     local_forward:
@@ -13,14 +13,14 @@ hosts:
     remote_forward:
     - local: localhost:8000
       remote: localhost:8000
-    ssh_options:
-      strict_host_key_checking: accept-new
-      bind_address: 127.0.0.1
-      batch_mode: true
-      compression: false
-      connect_timeout: 10
-      server_alive_interval: 600
-      exit_on_forward_failure: true
-      ciphers: chacha20-poly1305@openssh.com,aes128-ctr,...
-      macs: umac-64-etm@openssh.com,umac-128-etm@openssh.com,...
+    # ssh_options:
+    #   strict_host_key_checking: accept-new
+    #   bind_address: 127.0.0.1
+    #   batch_mode: true
+    #   compression: false
+    #   connect_timeout: 10
+    #   server_alive_interval: 600
+    #   exit_on_forward_failure: true
+    #   ciphers: chacha20-poly1305@openssh.com,aes128-ctr,...
+    #   macs: umac-64-etm@openssh.com,umac-128-etm@openssh.com,...
 
