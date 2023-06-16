@@ -12,7 +12,7 @@ use crate::yaml::{Host, SshOptions};
 pub static LOG_FILE: OnceCell<String> = OnceCell::new();
 
 fn format_ip(addr_or_port: &String) -> String {
-    if addr_or_port.contains(":") {
+    if addr_or_port.contains(':') {
         addr_or_port.clone()
     } else {
         format!("localhost:{}", addr_or_port)

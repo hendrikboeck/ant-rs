@@ -1,6 +1,6 @@
 [package]
 name = "ant"
-description = "Another Network Tunnel, program for port forwarding addresses over a SSH tunnel."
+description = "Another Network Tunnel; A simple program for local/remote port forwarding over a SSH tunnel."
 version = "0.1.2"
 edition = "2021"
 authors = ["Hendrik Böck <hendrikboeck.dev@protonmail.com>"]
