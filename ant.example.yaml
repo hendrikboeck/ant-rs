@@ -5,9 +5,22 @@ hosts:
   tunnel0:
     hostname: 10.0.0.100
     port: 22
-    identity_file: id_rsa
+    identity_file: ~/.ssh/id_rsa
     user: user
     host_key_strategy: ACCEPT
     local_forward:
-      - local: 8080
-        remote: 127.0.0.1:80
+    - local: 8080
+      remote: 127.0.0.1:80
+    remote_forward:
+    - local: localhost:8000
+      remote: localhost:8000
+    ssh_options:
+      strict_host_key_checking: accept-new
+      bind_address: 127.0.0.1
+      batch_mode: false
+      compression: false
+      ciphers: chacha20-poly1305@openssh.com,aes128-ctr,...
+      connect_timeout: 10
+      server_alive_interval: 600
+      macs: umac-64-etm@openssh.com,umac-128-etm@openssh.com,...
+      exit_on_forward_failure: true

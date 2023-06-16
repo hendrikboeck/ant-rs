@@ -27,6 +27,8 @@ async fn main() {
     const PKG_VERSION: &str = env!("CARGO_PKG_VERSION");
     const PKG_VERSION_MAJOR: &str = env!("CARGO_PKG_VERSION_MAJOR");
     const PKG_VERSION_MINOR: &str = env!("CARGO_PKG_VERSION_MINOR");
+    const RUST_BACKTRACE: &str = "RUST_BACKTRACE";
+    const RUST_LOG: &str = "RUST_LOG";
 
     let pname = format!(
         "🐜 {} {} - Command Line Tool",
@@ -37,9 +39,9 @@ async fn main() {
     println!("{}\n{}\n{}", borders, pname, borders);
 
     let args = CliArgs::parse();
-    env::set_var("RUST_LOG", &args.log_level);
-    if args.log_level.to_lowercase() == "debug" && env::var("RUST_BACKTRACE").is_err() {
-        env::set_var("RUST_BACKTRACE", "1");
+    env::set_var(RUST_LOG, &args.log_level);
+    if args.log_level.to_lowercase() == "debug" && env::var(RUST_BACKTRACE).is_err() {
+        env::set_var(RUST_BACKTRACE, "1");
     }
 
     build_custom_env_logger().init();
