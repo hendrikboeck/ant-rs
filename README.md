@@ -238,8 +238,8 @@ The tunnels are configured via the `ant.yaml` file (by default at `~/.ssh/ant.ya
 
 <sup>[(Back to top)](#table-of-contents)</sup>
 
-ant, program for port forwarding addresses over a SSH tunnel<br />
-Copyright (C) 2023, Hendrik Böck <hendrikboeck.dev@protnmail.com>
+ant, program for local/remote port forwarding over a SSH tunnel<br />
+Copyright (C) 2023, Hendrik Böck <hendrikboeck.dev@protonmail.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

@@ -143,3 +143,4 @@ release-windows-msvc-x86_64:
 # removes all build & packaging files
 clean:
   cargo clean
+  rm -rf dist
