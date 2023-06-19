@@ -48,7 +48,7 @@ pub fn build_ssh_process(name: &str, host: &Host) -> Command {
                 format_ip(&fwd.remote).green(),
                 format_ip(&fwd.local).green(),
             );
-            cmd.arg("-L").arg(format!("{}:{}", fwd.local, &fwd.remote));
+            cmd.arg("-L").arg(format!("{}:{}", &fwd.local, &fwd.remote));
         }
     }
 
@@ -59,7 +59,7 @@ pub fn build_ssh_process(name: &str, host: &Host) -> Command {
                 format_ip(&fwd.local).green(),
                 format_ip(&fwd.remote).green(),
             );
-            cmd.arg("-R").arg(format!("{}:{}", fwd.local, &fwd.remote));
+            cmd.arg("-R").arg(format!("{}:{}", &fwd.remote, &fwd.local));
         }
     }
 
