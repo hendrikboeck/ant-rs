@@ -94,7 +94,7 @@ To install the program you can use `just install` and then specify the installat
     Usage: ant [OPTIONS] <HOST>
 
     Arguments:
-      <HOST>  Host to create tunnel(s) for. Has to be in `hosts` inside your ANT configuration file. This host has to accessable without user input. (use identity_file, etc. for authentication)
+      <HOST>  Host to create tunnel(s) for. Has to be in `hosts` inside your ANT configuration file. This host has to be accessable without user input. (use identity_file, etc. for authentication)
 
     Options:
       -l, --log-level <LOG_LEVEL>  Log level of application [default: info]
