@@ -1,7 +1,7 @@
 [package]
-name = "ant"
+name = "ant-rs"
 description = "Another Network Tunnel; A simple program for local/remote port forwarding over a SSH tunnel."
-version = "0.1.3"
+version = "0.1.4"
 edition = "2021"
 authors = ["Hendrik Böck <hendrikboeck.dev@protonmail.com>"]
 license-file = "LICENSE"
@@ -26,13 +26,13 @@ once_cell = "1"
 [package.metadata.deb]
 assets = [
   [
-    "target/release/ant",
-    "usr/bin/ant",
+    "target/release/ant-rs",
+    "usr/bin/ant-rs",
     "755",
   ],
   [
     "README.md",
-    "usr/share/doc/ant/README",
+    "usr/share/doc/ant-rs/README",
     "644",
   ],
 ]
@@ -45,7 +45,7 @@ priority = "optional"
 [package.metadata.generate-rpm]
 license = "GPL-3.0-or-later"
 assets = [
-  { source = "target/release/ant", dest = "/usr/bin/ant", mode = "755" },
-  { source = "README.md", dest = "/usr/share/doc/ant/README", mode = "644" },
+  { source = "target/release/ant-rs", dest = "/usr/bin/ant-rs", mode = "755" },
+  { source = "README.md", dest = "/usr/share/doc/ant-rs/README", mode = "644" },
 ]
 auto-req = "auto"

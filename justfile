@@ -3,7 +3,8 @@ set shell := ["sh", "-c"]
 alias r := run
 alias b := build
 
-pkg_version := `echo "$(cargo pkgid)" | sed 's/.*@//'`
+version := `echo "$(cargo pkgid)" | sed 's/.*#//'`
+name := "ant-rs"
 
 # runs the project with arguments
 run *ARGS:
@@ -26,7 +27,7 @@ package-deb:
 [private]
 package-rpm: build
   cargo install cargo-generate-rpm
-  strip -s target/release/ant
+  strip -s target/release/{{name}}
   cargo generate-rpm
 
 # builds and installs the package. [possibile formats: cargo, deb, rpm]
@@ -39,7 +40,7 @@ install-cargo:
 
 [private]
 install-deb: package-deb
-  sudo dpkg -i target/debian/ant_*.deb
+  sudo dpkg -i target/debian/{{name}}_*.deb
   sudo apt-get install -f
 
 [private]
@@ -57,7 +58,7 @@ release-all: release-deb release-rpm release-linux release-windows-x86_64
 release-deb:
   mkdir -p dist
   just package-deb
-  cp target/debian/ant_*.deb dist/
+  cp target/debian/{{name}}_*.deb dist/
 
 [private]
 release-rpm:
@@ -67,27 +68,27 @@ release-rpm:
 
 [private]
 release-linux:
-  mkdir -p dist/ant_{{pkg_version}}
+  mkdir -p dist/{{name}}_{{version}}
   @just release-linux-gnu-x86_64
   @just release-linux-musl-x86_64
   @just release-linux-gnu-aarch64
   @just release-linux-musl-aarch64
   @just release-linux-gnu-riscv64
-  rm -rf dist/ant_{{pkg_version}}
+  rm -rf dist/{{name}}_{{version}}
 
 [private]
 release-linux-gnu-x86_64:
   just build --target=x86_64-unknown-linux-gnu
-  cp target/x86_64-unknown-linux-gnu/release/ant dist/ant_{{pkg_version}}
-  cd dist && tar -zcvf ant_{{pkg_version}}_linux_gnu.x86_64.tar.gz ant_{{pkg_version}}
-  rm -rf dist/ant_{{pkg_version}}/ant
+  cp target/x86_64-unknown-linux-gnu/release/{{name}} dist/{{name}}_{{version}}
+  cd dist && tar -zcvf {{name}}_{{version}}_linux_gnu.x86_64.tar.gz {{name}}_{{version}}
+  rm -rf dist/{{name}}_{{version}}/ant
 
 [private]
 release-linux-musl-x86_64:
   just build --target=x86_64-unknown-linux-musl
-  cp target/x86_64-unknown-linux-musl/release/ant dist/ant_{{pkg_version}}
-  cd dist && tar -zcvf ant_{{pkg_version}}_linux_musl.x86_64.tar.gz ant_{{pkg_version}}
-  rm -rf dist/ant_{{pkg_version}}/ant
+  cp target/x86_64-unknown-linux-musl/release/{{name}} dist/{{name}}_{{version}}
+  cd dist && tar -zcvf {{name}}_{{version}}_linux_musl.x86_64.tar.gz {{name}}_{{version}}
+  rm -rf dist/{{name}}_{{version}}/ant
 
 [private]
 release-linux-gnu-aarch64:
@@ -95,9 +96,9 @@ release-linux-gnu-aarch64:
     CC_aarch64_unknown_linux_gnu=aarch64-linux-gnu-gcc \
     CXX_aarch64_unknown_linux_gnu=aarch64-linux-gnu-g++ \
     just build --target=aarch64-unknown-linux-gnu
-  cp target/aarch64-unknown-linux-gnu/release/ant dist/ant_{{pkg_version}}
-  cd dist && tar -zcvf ant_{{pkg_version}}_linux_gnu.aarch64.tar.gz ant_{{pkg_version}}
-  rm -rf dist/ant_{{pkg_version}}/ant
+  cp target/aarch64-unknown-linux-gnu/release/{{name}} dist/{{name}}_{{version}}
+  cd dist && tar -zcvf {{name}}_{{version}}_linux_gnu.aarch64.tar.gz {{name}}_{{version}}
+  rm -rf dist/{{name}}_{{version}}/ant
 
 [private]
 release-linux-musl-aarch64:
@@ -105,9 +106,9 @@ release-linux-musl-aarch64:
     CC_aarch64_unknown_linux_musl=aarch64-linux-musl-gcc \
     CXX_aarch64_unknown_linux_musl=aarch64-linux-gnu-g++ \
     just build --target=aarch64-unknown-linux-musl
-  cp target/aarch64-unknown-linux-musl/release/ant dist/ant_{{pkg_version}}
-  cd dist && tar -zcvf ant_{{pkg_version}}_linux_musl.aarch64.tar.gz ant_{{pkg_version}}
-  rm -rf dist/ant_{{pkg_version}}/ant
+  cp target/aarch64-unknown-linux-musl/release/{{name}} dist/{{name}}_{{version}}
+  cd dist && tar -zcvf {{name}}_{{version}}_linux_musl.aarch64.tar.gz {{name}}_{{version}}
+  rm -rf dist/{{name}}_{{version}}/ant
 
 [private]
 release-linux-gnu-riscv64:
@@ -115,30 +116,30 @@ release-linux-gnu-riscv64:
     CC_riscv64gc_unknown_linux_gnu=riscv64-linux-gnu-gcc \
     CXX_riscv64gc_unknown_linux_gnu=riscv64-linux-gnu-g++ \
     just build --target=riscv64gc-unknown-linux-gnu
-  cp target/riscv64gc-unknown-linux-gnu/release/ant dist/ant_{{pkg_version}}
-  cd dist && tar -zcvf ant_{{pkg_version}}_linux_gnu.riscv64gc.tar.gz ant_{{pkg_version}}
-  rm -rf dist/ant_{{pkg_version}}/ant
+  cp target/riscv64gc-unknown-linux-gnu/release/{{name}} dist/{{name}}_{{version}}
+  cd dist && tar -zcvf {{name}}_{{version}}_linux_gnu.riscv64gc.tar.gz {{name}}_{{version}}
+  rm -rf dist/{{name}}_{{version}}/ant
 
 [private]
 release-windows-x86_64:
-  mkdir -p dist/ant_{{pkg_version}}
+  mkdir -p dist/{{name}}_{{version}}
   @just release-windows-gnu-x86_64
   @just release-windows-msvc-x86_64
-  rm -rf dist/ant_{{pkg_version}}
+  rm -rf dist/{{name}}_{{version}}
 
 [private]
 release-windows-gnu-x86_64:
   just build --target=x86_64-pc-windows-gnu
-  cp target/x86_64-pc-windows-gnu/release/ant.exe dist/ant_{{pkg_version}}
-  cd dist && zip ant_{{pkg_version}}_windows_gnu.x86_64.zip ant_{{pkg_version}}/ant.exe
-  rm -rf dist/ant_{{pkg_version}}/ant.exe
+  cp target/x86_64-pc-windows-gnu/release/{{name}}.exe dist/{{name}}_{{version}}
+  cd dist && zip {{name}}_{{version}}_windows_gnu.x86_64.zip {{name}}_{{version}}/{{name}}.exe
+  rm -rf dist/{{name}}_{{version}}/{{name}}.exe
 
 [private]
 release-windows-msvc-x86_64:
   just build --target=x86_64-pc-windows-msvc
-  cp target/x86_64-pc-windows-msvc/release/ant.exe dist/ant_{{pkg_version}}
-  cd dist && zip ant_{{pkg_version}}_windows_msvc.x86_64.zip ant_{{pkg_version}}/ant.exe
-  rm -rf dist/ant_{{pkg_version}}/ant.exe
+  cp target/x86_64-pc-windows-msvc/release/{{name}}.exe dist/{{name}}_{{version}}
+  cd dist && zip {{name}}_{{version}}_windows_msvc.x86_64.zip {{name}}_{{version}}/{{name}}.exe
+  rm -rf dist/{{name}}_{{version}}/{{name}}.exe
 
 # removes all build & packaging files
 clean:
