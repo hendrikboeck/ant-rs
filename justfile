@@ -45,87 +45,74 @@ install-deb: package-deb
 
 [private]
 install-rpm: package-rpm
-  sudo dnf localinstall target/generate-rpm/ant-*.rpm
+  sudo dnf localinstall target/generate-rpm/{{name}}-*.rpm
 
 # creates all release files for a specific platform  [possibile platforms: linux, windows, all]
 release PLATFORM:
+  mkdir -p dist/{{name}}_{{version}}
   @just release-{{PLATFORM}}
+  rm -rf dist/{{name}}_{{version}}
 
 [private]
 release-all: release-deb release-rpm release-linux release-windows-x86_64
 
 [private]
 release-deb:
-  mkdir -p dist
   just package-deb
   cp target/debian/{{name}}_*.deb dist/
 
 [private]
 release-rpm:
-  mkdir -p dist
   just package-rpm
-  cp target/generate-rpm/ant-*.rpm dist/
+  cp target/generate-rpm/{{name}}-*.rpm dist/
 
 [private]
 release-linux:
-  mkdir -p dist/{{name}}_{{version}}
   @just release-linux-gnu-x86_64
   @just release-linux-musl-x86_64
   @just release-linux-gnu-aarch64
   @just release-linux-musl-aarch64
   @just release-linux-gnu-riscv64
-  rm -rf dist/{{name}}_{{version}}
 
 [private]
 release-linux-gnu-x86_64:
   just build --target=x86_64-unknown-linux-gnu
   cp target/x86_64-unknown-linux-gnu/release/{{name}} dist/{{name}}_{{version}}
   cd dist && tar -zcvf {{name}}_{{version}}_linux_gnu.x86_64.tar.gz {{name}}_{{version}}
-  rm -rf dist/{{name}}_{{version}}/ant
+  rm -rf dist/{{name}}_{{version}}/{{name}}
 
 [private]
 release-linux-musl-x86_64:
   just build --target=x86_64-unknown-linux-musl
   cp target/x86_64-unknown-linux-musl/release/{{name}} dist/{{name}}_{{version}}
   cd dist && tar -zcvf {{name}}_{{version}}_linux_musl.x86_64.tar.gz {{name}}_{{version}}
-  rm -rf dist/{{name}}_{{version}}/ant
+  rm -rf dist/{{name}}_{{version}}/{{name}}
 
 [private]
 release-linux-gnu-aarch64:
-  CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc \
-    CC_aarch64_unknown_linux_gnu=aarch64-linux-gnu-gcc \
-    CXX_aarch64_unknown_linux_gnu=aarch64-linux-gnu-g++ \
-    just build --target=aarch64-unknown-linux-gnu
-  cp target/aarch64-unknown-linux-gnu/release/{{name}} dist/{{name}}_{{version}}
+  just build --target=aarch64-unknown-linux-gnu
+  cp target/aarch64-unknown-linux-gnu/release/{{name}} dist/{{name}}_{{version}}/
   cd dist && tar -zcvf {{name}}_{{version}}_linux_gnu.aarch64.tar.gz {{name}}_{{version}}
-  rm -rf dist/{{name}}_{{version}}/ant
+  rm -rf dist/{{name}}_{{version}}/{{name}}
 
 [private]
 release-linux-musl-aarch64:
-  CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER=aarch64-linux-musl-gcc \
-    CC_aarch64_unknown_linux_musl=aarch64-linux-musl-gcc \
-    CXX_aarch64_unknown_linux_musl=aarch64-linux-gnu-g++ \
-    just build --target=aarch64-unknown-linux-musl
+  just build --target=aarch64-unknown-linux-musl
   cp target/aarch64-unknown-linux-musl/release/{{name}} dist/{{name}}_{{version}}
   cd dist && tar -zcvf {{name}}_{{version}}_linux_musl.aarch64.tar.gz {{name}}_{{version}}
-  rm -rf dist/{{name}}_{{version}}/ant
+  rm -rf dist/{{name}}_{{version}}/{{name}}
 
 [private]
 release-linux-gnu-riscv64:
-  CARGO_TARGET_RISCV64GC_UNKNOWN_LINUX_GNU_LINKER=riscv64-linux-gnu-gcc \
-    CC_riscv64gc_unknown_linux_gnu=riscv64-linux-gnu-gcc \
-    CXX_riscv64gc_unknown_linux_gnu=riscv64-linux-gnu-g++ \
-    just build --target=riscv64gc-unknown-linux-gnu
+  just build --target=riscv64gc-unknown-linux-gnu
   cp target/riscv64gc-unknown-linux-gnu/release/{{name}} dist/{{name}}_{{version}}
   cd dist && tar -zcvf {{name}}_{{version}}_linux_gnu.riscv64gc.tar.gz {{name}}_{{version}}
-  rm -rf dist/{{name}}_{{version}}/ant
+  rm -rf dist/{{name}}_{{version}}/{{name}}
 
 [private]
 release-windows-x86_64:
-  mkdir -p dist/{{name}}_{{version}}
   @just release-windows-gnu-x86_64
   @just release-windows-msvc-x86_64
-  rm -rf dist/{{name}}_{{version}}
 
 [private]
 release-windows-gnu-x86_64:
