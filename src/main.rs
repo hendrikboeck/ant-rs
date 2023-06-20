@@ -29,11 +29,7 @@ const RUST_LOG: &str = "RUST_LOG";
 
 #[tokio::main]
 async fn main() {
-    let pname = format!(
-        "🐜 {} {} - Command Line Tool",
-        "ANT".bold(),
-        PKG_VERSION
-    );
+    let pname = format!("🐜 {} {} - Command Line Tool", "ANT".bold(), PKG_VERSION);
     let borders = String::from_iter(['-'; 50]).bold();
     println!("{}\n{}\n{}", borders, pname, borders);
 
