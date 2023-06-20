@@ -94,7 +94,7 @@ To install the program you can use `just install` and then specify the installat
     Usage: ant [OPTIONS] <HOST>
 
     Arguments:
-      <HOST>  Host to create tunnel(s) for. Has to be in `hosts` inside your ANT configuration file. This host has to be accessable without user input. (use identity_file, etc. for authentication)
+      <HOST>  Host to create tunnel(s) for. Has to be in `hosts` inside your ANT configuration file. This host has to be accessible without user input. (use identity_file, etc. for authentication)
 
     Options:
       -l, --log-level <LOG_LEVEL>  Log level of application [default: info]
@@ -143,7 +143,7 @@ The tunnels are configured via the `ant.yaml` file (by default at `~/.ssh/ant.ya
   <br />**Type:** Item[ ]
   <br />**Item:**
 
-  - `local`: String - IP/FQDN and port for client, where they should be accessable
+  - `local`: String - IP/FQDN and port for client, where they should be accessible
   - `remote`: String - IP/FQDN and port for server, that should be forwarded
 
 - **`hosts.$host.remote_forward`**
@@ -152,7 +152,7 @@ The tunnels are configured via the `ant.yaml` file (by default at `~/.ssh/ant.ya
   <br />**Item:**
 
   - `local`: String - IP/FQDN and port for client, that should be forwarded
-  - `remote`: String - IP/FQDN and port for server, where they should be accessable
+  - `remote`: String - IP/FQDN and port for server, where they should be accessible
 
 - **`hosts.$host.ssh_options` (optional)**
   <br />Additional SSH options that can be set for a specific host.

@@ -10,7 +10,7 @@ name := "ant-rs"
 run *ARGS:
   RUST_BACKTRACE=1 RUST_LOG=trace cargo run -- {{ARGS}}
 
-# builds the project
+# builds the project in `--release` mode
 build *ARGS:
   cargo build --release {{ARGS}}
 
@@ -47,7 +47,7 @@ install-deb: package-deb
 install-rpm: package-rpm
   sudo dnf localinstall target/generate-rpm/{{name}}-*.rpm
 
-# creates all release files for a specific platform  [possibile platforms: linux, windows, all]
+# creates all release files for a specific platform [possibile platforms: all, linux, windows, linux-gnu-x86_64, linux-musl-x86_64, linux-gnu-aarch64, linux-musl-aarch64, linux-gnu-riscv64, windows-x86_64, windows-msvc-x86_64]
 release PLATFORM:
   mkdir -p dist/{{name}}_{{version}}
   @just release-{{PLATFORM}}

@@ -64,7 +64,7 @@ pub struct CliArgs {
     pub config: String,
 
     /// Host to create tunnel(s) for. Has to be in `hosts` inside your ANT configuration file.
-    /// This host has to accessable without user input. (use identity_file, etc. for authentication).
+    /// This host has to accessible without user input. (use identity_file, etc. for authentication).
     #[arg()]
     pub host: String,
 }
