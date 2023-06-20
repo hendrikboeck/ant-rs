@@ -17,11 +17,7 @@ pub fn build_custom_env_logger() -> Builder {
                 Level::Warn => level.as_str().yellow(),
                 Level::Error => level.as_str().red(),
             };
-            let prefix = format!(
-                "{} {:5} com.ant.cli -",
-                Local::now().format("%X"),
-                level
-            );
+            let prefix = format!("{} {:5} com.ant.cli -", Local::now().format("%X"), level);
 
             writeln!(buf, "{} {}", prefix.bold(), record.args())
         })
