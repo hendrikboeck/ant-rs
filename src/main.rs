@@ -21,7 +21,6 @@ use crate::configuration::{CliArgs, TMP_DIR};
 use crate::logger::build_custom_env_logger;
 use crate::yaml::Root;
 
-const PKG_NAME: &str = env!("CARGO_PKG_NAME");
 const PKG_VERSION: &str = env!("CARGO_PKG_VERSION");
 const PKG_VERSION_MAJOR: &str = env!("CARGO_PKG_VERSION_MAJOR");
 const PKG_VERSION_MINOR: &str = env!("CARGO_PKG_VERSION_MINOR");
@@ -32,7 +31,7 @@ const RUST_LOG: &str = "RUST_LOG";
 async fn main() {
     let pname = format!(
         "🐜 {} {} - Command Line Tool",
-        PKG_NAME.to_uppercase().bold(),
+        "ANT".bold(),
         PKG_VERSION
     );
     let borders = String::from_iter(['-'; 50]).bold();

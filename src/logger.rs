@@ -4,8 +4,6 @@ use env_logger::{self, Builder};
 use log::Level;
 use std::io::Write;
 
-const CARGO_PKG_NAME: &str = env!("CARGO_PKG_NAME");
-
 pub fn build_custom_env_logger() -> Builder {
     let mut builder = env_logger::builder();
 
@@ -20,10 +18,9 @@ pub fn build_custom_env_logger() -> Builder {
                 Level::Error => level.as_str().red(),
             };
             let prefix = format!(
-                "{} {:5} com.{}.cli -",
+                "{} {:5} com.ant.cli -",
                 Local::now().format("%X"),
-                level,
-                CARGO_PKG_NAME
+                level
             );
 
             writeln!(buf, "{} {}", prefix.bold(), record.args())
