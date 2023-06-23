@@ -15,6 +15,7 @@ use std::{
         Arc,
     },
 };
+use which::which;
 
 use crate::command_builder::{build_ssh_process, LOG_FILE};
 use crate::configuration::{CliArgs, TMP_DIR};
@@ -41,8 +42,14 @@ async fn main() {
 
     build_custom_env_logger().init();
 
-    info!("Parsed arguments from CLI");
+    debug!("Parsed arguments from CLI");
     debug!("{:#?}", &args);
+
+    which("ssh").unwrap_or_else(|e| {
+        error!("Failed to find executable `ssh` in $PATH.");
+        error!("Original error: {}", e.to_string().italic());
+        exit(exitcode::UNAVAILABLE);
+    });
 
     if !TMP_DIR.exists() {
         fs::create_dir_all(TMP_DIR.as_path()).unwrap_or_else(|e| {
@@ -50,24 +57,24 @@ async fn main() {
                 "Failed to create local directory `{}`. Does not yet exist in filepath.",
                 TMP_DIR.to_string_lossy()
             );
-            error!("Original Error: {}", e.to_string().italic());
+            error!("Original error: {}", e.to_string().italic());
             exit(exitcode::SOFTWARE);
         });
     }
 
     let file = fs::read_to_string(&args.config).unwrap_or_else(|e| {
         error!("Failed load file `{}`", &args.config);
-        error!("Original Error: {}", e.to_string().italic());
+        error!("Original error: {}", e.to_string().italic());
         exit(exitcode::IOERR);
     });
-    info!("Loaded ant configuration from `{}`", &args.config);
+    debug!("Loaded ant configuration from `{}`", &args.config);
 
     let root: Root = serde_yaml::from_str(&file).unwrap_or_else(|e| {
         error!(
             "Data in `{}` was malformed, please check documentation.",
             &args.config
         );
-        error!("Original Error: {}", e.to_string().italic());
+        error!("Original error: {}", e.to_string().italic());
         exit(exitcode::CONFIG);
     });
     debug!("{:#?}", &root);
@@ -88,7 +95,7 @@ async fn main() {
         );
         exit(exitcode::CONFIG);
     });
-    info!("Loaded configuration for host `{}`", &args.host);
+    debug!("Loaded configuration for host `{}`", &args.host);
     debug!("{:#?}", &host);
 
     if host.local_forward.is_none() && host.remote_forward.is_none() {
@@ -96,24 +103,28 @@ async fn main() {
         exit(exitcode::CONFIG);
     }
 
-    let mut proc = build_ssh_process(&args.host, &host)
-        .spawn()
-        .unwrap_or_else(|e| {
-            error!("Failed to spawn SSH process");
-            error!("Original Error: {}", e.to_string().italic());
-            exit(exitcode::OSERR);
-        });
-    info!("Spawned SSH process with PID {}", proc.id().unwrap());
+    if args.daemon {
+        info!("Running application in daemon mode (will recreate child process on child exit)",);
+    }
+
+    let mut cmd = build_ssh_process(&args.host, &host);
+    let mut proc = cmd.spawn().unwrap_or_else(|e| {
+        error!("Failed to spawn child process");
+        error!("Original error: {}", e.to_string().italic());
+        exit(exitcode::OSERR);
+    });
+    info!("Spawned child process with PID {}", proc.id().unwrap());
 
     let running = Arc::new(AtomicBool::new(true));
     let r = running.clone();
 
     ctrlc::set_handler(move || r.store(false, Ordering::SeqCst)).unwrap_or_else(|e| {
         error!("Failed to spawn Ctrl-C interrupt");
-        error!("Original Error: {}", e.to_string().italic());
+        error!("Original error: {}", e.to_string().italic());
         exit(exitcode::OSERR);
     });
 
+    debug!("Writing log to `{}`", LOG_FILE.get().unwrap());
     info!("Waiting on Ctrl-C...");
     while running.load(Ordering::SeqCst) {
         if let Some(status) = proc.try_wait().unwrap_or_else(|e| {
@@ -123,16 +134,27 @@ async fn main() {
             );
             None
         }) {
-            error!(
-                "Process exited prematurely with code {}, please check logs at `{}` for futher diagnosis.",
-                status.code().unwrap(),
-                LOG_FILE.get().unwrap()
-            );
-            exit(exitcode::SOFTWARE);
+            if args.daemon {
+                info!("Child process exited with code {}", status.code().unwrap());
+                info!("Trying to recreate child process (daemon mode)");
+                proc = cmd.spawn().unwrap_or_else(|e| {
+                    error!("Failed to spawn child process");
+                    error!("Original error: {}", e.to_string().italic());
+                    exit(exitcode::OSERR);
+                });
+                info!("Spawned child process with PID {}", proc.id().unwrap());
+            } else {
+                error!(
+                    "Process exited prematurely with code {}, please check logs at `{}` for futher diagnosis.",
+                    status.code().unwrap(),
+                    LOG_FILE.get().unwrap()
+                );
+                exit(exitcode::SOFTWARE);
+            }
         }
     }
     println!();
-    info!("Killing SSH process with PID {}", proc.id().unwrap());
+    info!("Killing child process with PID {}", proc.id().unwrap());
     proc.kill().await.unwrap();
     info!("Finished. Exiting...");
 }

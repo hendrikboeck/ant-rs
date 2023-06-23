@@ -28,7 +28,6 @@ pub struct Forward {
 pub struct SshOptions {
     pub strict_host_key_checking: Option<String>,
     pub bind_address: Option<String>,
-    pub batch_mode: Option<bool>,
     pub compression: Option<bool>,
     pub ciphers: Option<String>,
     pub connect_timeout: Option<usize>,
@@ -42,7 +41,6 @@ impl Default for SshOptions {
         Self {
             strict_host_key_checking: Some("yes".into()),
             bind_address: None,
-            batch_mode: Some(true),
             compression: Some(false),
             ciphers: None,
             connect_timeout: Some(10),
