@@ -94,12 +94,16 @@ To install the program you can use `just install` and then specify the installat
     Usage: ant-rs [OPTIONS] <HOST>
 
     Arguments:
-      <HOST>  Host to create tunnel(s) for. Has to be in `hosts` inside your ANT configuration file. This host has to be accessible without user input. (use identity_file, etc. for authentication)
+      <HOST>  Host to create tunnel(s) for. Has to be in `hosts` inside your ANT configuration file.
+              This host has to be accessible without user input. (use identity_file, etc. for
+              authentication)
 
     Options:
       -l, --log-level <LOG_LEVEL>  Log level of application [default: info]
-      -c, --config <CONFIG>        Path to ANT configuration file `ant.yaml` [default: ~/.ssh/ant.yaml]
-      -d, --daemon                 Run application in daemon mode. (will restart child process on child exit)
+      -c, --config <CONFIG>        Path to ANT configuration file `ant.yaml`
+                                   [default: ~/.ssh/ant.yaml]
+      -d, --daemon                 Run application in daemon mode.
+                                   (will restart child process on child exit)
       -h, --help                   Print help
       -V, --version                Print version
 
