@@ -77,7 +77,7 @@ dependencies = [
 
 [[package]]
 name = "ant-rs"
-version = "0.1.5"
+version = "0.1.6-pre"
 dependencies = [
  "chrono",
  "clap",

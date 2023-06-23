@@ -50,6 +50,10 @@ install-rpm: package-rpm
 # creates all release files for a specific platform [possibile platforms: all, linux, windows, linux-gnu-x86_64, linux-musl-x86_64, linux-gnu-aarch64, linux-musl-aarch64, linux-gnu-riscv64, windows-x86_64, windows-msvc-x86_64]
 release PLATFORM:
   mkdir -p dist/{{name}}_{{version}}
+  cp README.md dist/{{name}}_{{version}}/README
+  chmod +x res/install.sh
+  cp res/install.sh dist/{{name}}_{{version}}/
+  cp res/ant-rs.man dist/{{name}}_{{version}}/ant-rs.8
   @just release-{{PLATFORM}}
   rm -rf dist/{{name}}_{{version}}
 
@@ -118,14 +122,18 @@ release-windows-x86_64:
 release-windows-gnu-x86_64:
   just build --target=x86_64-pc-windows-gnu
   cp target/x86_64-pc-windows-gnu/release/{{name}}.exe dist/{{name}}_{{version}}
-  cd dist && zip {{name}}_{{version}}_windows_gnu.x86_64.zip {{name}}_{{version}}/{{name}}.exe
+  cd dist && zip {{name}}_{{version}}_windows_gnu.x86_64.zip \
+    {{name}}_{{version}}/{{name}}.exe \
+    {{name}}_{{version}}/README.md
   rm -rf dist/{{name}}_{{version}}/{{name}}.exe
 
 [private]
 release-windows-msvc-x86_64:
   just build --target=x86_64-pc-windows-msvc
   cp target/x86_64-pc-windows-msvc/release/{{name}}.exe dist/{{name}}_{{version}}
-  cd dist && zip {{name}}_{{version}}_windows_msvc.x86_64.zip {{name}}_{{version}}/{{name}}.exe
+  cd dist && zip {{name}}_{{version}}_windows_msvc.x86_64.zip \
+    {{name}}_{{version}}/{{name}}.exe \
+    {{name}}_{{version}}/README.md
   rm -rf dist/{{name}}_{{version}}/{{name}}.exe
 
 # removes all build & packaging files
