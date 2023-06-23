@@ -63,12 +63,12 @@ pub struct CliArgs {
     #[arg(short, long, default_value_t = default_ant_config())]
     pub config: String,
 
-    /// Run application in daemon mode. (requires `autossh` to work)
+    /// Run application in daemon mode. (will restart child process on child exit)
     #[arg(short, long, action)]
     pub daemon: bool,
 
     /// Host to create tunnel(s) for. Has to be in `hosts` inside your ANT configuration file.
-    /// This host has to accessible without user input. (use identity_file, etc. for authentication).
+    /// This host has to be accessible without user input. (use identity_file, etc. for authentication).
     #[arg()]
     pub host: String,
 }

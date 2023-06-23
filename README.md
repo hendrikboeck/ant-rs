@@ -87,11 +87,11 @@ To install the program you can use `just install` and then specify the installat
 <sup>[(Back to top)](#table-of-contents)</sup>
 
     --------------------------------------------------
-    🐜 ANT 0.1.2 - Command Line Tool
+    🐜 ANT 0.1.5 - Command Line Tool
     --------------------------------------------------
     Another Network Tunnel; A simple program for local/remote port forwarding over a SSH tunnel.
 
-    Usage: ant [OPTIONS] <HOST>
+    Usage: ant-rs [OPTIONS] <HOST>
 
     Arguments:
       <HOST>  Host to create tunnel(s) for. Has to be in `hosts` inside your ANT configuration file. This host has to be accessible without user input. (use identity_file, etc. for authentication)
@@ -99,6 +99,7 @@ To install the program you can use `just install` and then specify the installat
     Options:
       -l, --log-level <LOG_LEVEL>  Log level of application [default: info]
       -c, --config <CONFIG>        Path to ANT configuration file `ant.yaml` [default: ~/.ssh/ant.yaml]
+      -d, --daemon                 Run application in daemon mode. (will restart child process on child exit)
       -h, --help                   Print help
       -V, --version                Print version
 
