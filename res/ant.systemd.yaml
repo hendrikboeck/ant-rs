@@ -1,0 +1,29 @@
+version: "0.1"
+
+hosts:
+
+  # ----------------------------------------------------------------------------
+  #      START DAEMON TARGET [/usr/lib/systemd/system/ant-rs-daemon.service]
+  # ----------------------------------------------------------------------------
+
+  daemon: # do not change target name
+    hostname: <your ip>
+    port: <your port>
+    # choose a host key which is accessible for multi-user.target
+    # generate if necessary with following command: `sudo ssh-keygen -A`
+    identity_file: /etc/ssh/ssh_host_rsa_key
+    #identity_file: /etc/ssh/ssh_host_ecdsa_key
+    #identity_file: /etc/ssh/ssh_host_ed25519_key
+    user: <remote user>
+    local_forward:
+    - local: <ip or fqdn>:<port>
+      remote: <ip or fqdn>:<port>
+    remote_forward:
+    - local: <ip or fqdn>:<port>
+      remote: <ip or fqdn>:<port>
+
+    # additional `ssh_options:` ...
+
+  # ----------------------------------------------------------------------------
+  #       END DAEMON TARGET [/usr/lib/systemd/system/ant-rs-daemon.service]
+  # ----------------------------------------------------------------------------

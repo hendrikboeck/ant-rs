@@ -1,18 +1,18 @@
-version: "0.1.0"
+version: "0.1"
 
 hosts:
 
-  tunnel0:
-    hostname: 10.0.0.100
-    # port: 22
-    identity_file: ~/.ssh/id_rsa
-    user: user
+  <your tunnel name>:
+    hostname: <ip or fqdn>
+    port: <port>
+    identity_file: <path to private keyfile>
+    user: <remote user>
     local_forward:
-    - local: 8080
-      remote: 127.0.0.1:80
+    - local: <ip or fqdn>:<port>
+      remote: <ip or fqdn>:<port>
     remote_forward:
-    - local: localhost:8000
-      remote: localhost:8000
+    - local: <ip or fqdn>:<port>
+      remote: <ip or fqdn>:<port>
     # ssh_options:
     #   strict_host_key_checking: accept-new
     #   bind_address: 127.0.0.1
