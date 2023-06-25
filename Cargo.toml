@@ -1,7 +1,7 @@
 [package]
 name = "ant-rs"
 description = "Another Network Tunnel; A simple program for local/remote port forwarding over a SSH tunnel."
-version = "0.1.6-pre"
+version = "0.1.6-pre.2"
 edition = "2021"
 authors = ["Hendrik Böck <hendrikboeck.dev@protonmail.com>"]
 license-file = "LICENSE"
@@ -41,6 +41,16 @@ assets = [
     "usr/share/man/man8/ant-rs.8",
     "644",
   ],
+  [
+    "res/ant.systemd.yaml",
+    "etc/ssh/ant.yaml",
+    "644",
+  ],
+  [
+    "res/ant-rs-daemon.service",
+    "usr/lib/systemd/system/ant-rs-daemon.service",
+    "644",
+  ],
 ]
 maintainer = "Hendrik Böck <hendrikboeck.dev@protonmail.com>"
 copyright = "2023, Hendrik Böck <hendrikboeck.dev@protonmail.com>"
@@ -53,6 +63,8 @@ assets = [
   { source = "target/release/ant-rs", dest = "/usr/bin/ant-rs", mode = "755" },
   { source = "README.md", dest = "/usr/share/doc/ant-rs/README", mode = "644" },
   { source = "res/ant-rs.man", dest = "/usr/share/man/man8/ant-rs.8", mode = "644" },
+  { source = "res/ant.systemd.yaml", dest = "/etc/ssh/ant.yaml", mode = "644" },
+  { source = "res/ant-rs-daemon.service", dest = "/usr/lib/systemd/system/ant-rs-daemon.service", mode = "644" },
 ]
 license = "GPL-3.0-or-later"
 auto-req = "auto"
