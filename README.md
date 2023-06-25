@@ -111,7 +111,7 @@ To install the program you can use `just install` and then specify the installat
 
 <sup>[(Back to top)](#table-of-contents)</sup>
 
-The tunnels are configured via the `ant.yaml` file (by default at `~/.ssh/ant.yaml`). An example file can be found in this repository at [`./ant.example.yaml`](./ant.example.yaml). The application uses the latest YAML standard to parse its configuration. Note that in the newest configuration only `true|True|TRUE|false|False|FALSE` are valid boolean values. `y|yes|...|n|no|...|off|...` will be read as String and may throw a hard error.
+The tunnels are configured via the `ant.yaml` file (by default at `~/.ssh/ant.yaml`). An example file can be found in this repository at [`./res/ant.example.yaml`](./res/ant.example.yaml). The application uses the latest YAML standard to parse its configuration. Note that in the newest configuration only `true|True|TRUE|false|False|FALSE` are valid boolean values. `y|yes|...|n|no|...|off|...` will be read as String and may throw a hard error.
 
 - **`version`**
   <br/>Set the version of the program that should consume the configuration file. Major and minor version should match the used version of `ant`. If this version does not mtach the application will throw a hard error.
