@@ -1,0 +1,16 @@
+[Unit]
+Description=Another Network Tunnel; A simple program for local/remote port forwarding over a SSH tunnel.
+Documentation=https://github.com/hendrikboeck/ant-rs
+Wants=sshdgenkeys.service
+After=sshdgenkeys.service
+After=network.target
+
+[Service]
+User=root
+ExecStart=/usr/bin/ant-rs -d -c /etc/ssh/ant.yaml daemon
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

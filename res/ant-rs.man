@@ -1,0 +1,70 @@
+.\" Manpage for ant-rs (Another Network Tunnel)
+.\" Contact hendrikboeck.dev@protonmail.com to correct errors or typos.
+.\" or file issue at https://github.com/hendrikboeck/ant-rs
+.\"
+.TH man 8 "23 Jun 2023" "0.1" "ant-rs man page"
+.SH NAME
+ant-rs - Another Network Tunnel; A simple program for local/remote port forwarding over a SSH tunnel.
+
+.SH SYNOPSIS
+.B ant-rs
+[\fB-dhV\fR] [\fB\-l\fR \fIlog_level\fR] [\fB-c\fR \fIconfig_file\fR]
+.I host
+
+.SH DESCRIPTION
+.B ant-rs
+(Another Network Tunnel) is a simple program for local/remote port forwarding over a SSH tunnel.
+This program supports remote and local port forwarding to a ssh server.
+When run in daemon mode the program will try to reconnect to the server if connection is lost.
+Through the \fBant-rs-daemon.service\fR systemd service can the program be run on boot (uses \fI/etc/ssh/ant.yaml\fR as configuration file).
+
+.SH OPTIONS
+.TP
+\fB\-c, \-\-config\fR \fIconfig_file\fR
+Path to \fBant-rs\fR YAML configuration file \fIconfig_file\fR.
+User, who executes \fBant-rs\fR has to have read access on configuration file, otherwise all systemwide paths are allowed.
+
+By default, \fI~/.ssh/ant.yaml\fR.
+The systemd \fBant-rs-daemon.service\fR uses by default \fI/etc/ssh/ant.yaml\fR as its configuration file.
+
+.TP
+.B \-d, \-\-daemon
+Run application in daemon mode.
+This option will recreate the child \fBssh\fR process, when its predecessor exited (e.g. due to connection timeout).
+This procedure will ensure that \fBant-rs\fR will not exit on connection loss, but rather try to reconnect to the server, till Ctrl-C is pressed.
+
+.TP
+.B \-h, \-\-help
+Prints help.
+
+.TP
+\fB\-l, \-\-log\-level\fR \fIlog_level\fR
+
+Set the log level of the application.
+Possible options are listed below.
+
+.in +4
+.EX
+trace
+debug
+info
+warn
+error
+.EE
+.in
+
+By default, \fIinfo\fR
+
+.TP
+.B \-V, \-\-version
+Prints version. (format: major.minor.patch)
+
+.SH SEE ALSO
+.BR https://github.com/hendrikboeck/ant-rs,
+.BR ssh (1)
+
+.SH BUGS
+No known bugs.
+
+.SH AUTHOR
+Hendrik Böck <hendrikboeck.dev@protonmail.com>
