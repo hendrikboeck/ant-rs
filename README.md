@@ -87,7 +87,7 @@ To install the program you can use `just install` and then specify the installat
 <sup>[(Back to top)](#table-of-contents)</sup>
 
     --------------------------------------------------
-    🐜 ANT 0.1.5 - Command Line Tool
+    🐜 ANT 0.1.7 - Command Line Tool
     --------------------------------------------------
     Another Network Tunnel; A simple program for local/remote port forwarding over a SSH tunnel.
 

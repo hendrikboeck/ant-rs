@@ -1,7 +1,7 @@
 [package]
 name = "ant-rs"
 description = "Another Network Tunnel; A simple program for local/remote port forwarding over a SSH tunnel."
-version = "0.1.6-dev"
+version = "0.1.7"
 edition = "2021"
 authors = ["Hendrik Böck <hendrikboeck.dev@protonmail.com>"]
 license-file = "LICENSE"
