@@ -15,6 +15,7 @@ use std::{
         Arc,
     },
 };
+use tokio::time::{sleep, Duration};
 use which::which;
 
 use crate::command_builder::{build_ssh_process, LOG_FILE};
@@ -152,6 +153,7 @@ async fn main() {
                 exit(exitcode::SOFTWARE);
             }
         }
+        sleep(Duration::from_millis(1000)).await;
     }
     println!();
     info!("Killing child process with PID {}", proc.id().unwrap());

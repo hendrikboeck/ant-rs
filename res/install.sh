@@ -14,6 +14,6 @@ chmod 644 /usr/share/man/man8/ant-rs.8.gz
 
 mkdir -p /usr/lib/systemd/system/
 cp systemd/ant-rs-daemon.service /usr/lib/systemd/system/
-cp systemd/ant.yaml              /etc/ssh
+cp -n systemd/ant.yaml           /etc/ssh
 chmod 644 /etc/ssh/ant.yaml
 chmod 644 /usr/lib/systemd/system/ant-rs-daemon.service

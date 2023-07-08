@@ -8,7 +8,6 @@ After=network.target
 [Service]
 User=root
 ExecStart=/usr/bin/ant-rs -d -c /etc/ssh/ant.yaml daemon
-ExecReload=/bin/kill -HUP $MAINPID
 KillMode=process
 Restart=always
 
