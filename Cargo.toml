@@ -1,7 +1,7 @@
 [package]
 name = "ant-rs"
 description = "Another Network Tunnel; A simple program for local/remote port forwarding over a SSH tunnel."
-version = "0.1.8"
+version = "0.1.9"
 edition = "2021"
 authors = ["Hendrik Böck <hendrikboeck.dev@protonmail.com>"]
 license-file = "LICENSE"
@@ -11,14 +11,14 @@ repository = "https://github.com/hendrikboeck/ant-rs"
 
 [dependencies]
 chrono = "0.4"
-colored = "2"
-env_logger = "0.10"
+colored = "3"
+env_logger = "0.11"
 log = "0.4"
 clap = { version = "4", features = ["derive"] }
 serde = { version = "1", features = ["derive"] }
 serde_yaml = "0.9"
 exitcode = "1"
-directories = "5"
+directories = "6"
 tokio = { version = "1", features = [
   "macros",
   "rt-multi-thread",
@@ -27,7 +27,7 @@ tokio = { version = "1", features = [
 ] }
 ctrlc = "3"
 once_cell = "1"
-which = "4"
+which = "8"
 
 [package.metadata.deb]
 assets = [
